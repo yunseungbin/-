@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>대신 거절해드립니다</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #E7ECE6;
+    --surface: #FCFCFA;
+    --surface-2: #F3F6F1;
+    --ink: #25322B;
+    --celadon: #5E8270;
+    --celadon-deep: #3C5749;
+    --persimmon: #CC7B58;
+    --persimmon-deep: #B5663F;
+    --muted: #87938C;
+    --line: #D4DCD3;
+    --serif: "Gowun Batang", serif;
+    --sans: "Gowun Dodum", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  .wrap {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 36px 20px 72px;
+  }
+
+  /* ---- header ---- */
+  .masthead { text-align: center; margin-bottom: 30px; }
+  .desk-mark {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; letter-spacing: 0.18em; color: var(--celadon);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 14px; margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+  .desk-mark .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--persimmon); }
+  .wordmark {
+    font-family: var(--serif); font-weight: 700;
+    font-size: clamp(30px, 8vw, 40px);
+    margin: 0 0 8px; letter-spacing: -0.01em;
+  }
+  .tagline { font-family: var(--serif); color: var(--celadon-deep); font-size: 16px; margin: 0; }
+
+  /* ---- form sections ---- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 22px 24px;
+    margin-bottom: 16px;
+  }
+  .step {
+    display: flex; align-items: baseline; gap: 9px;
+    margin: 0 0 14px;
+  }
+  .step .n {
+    font-family: var(--serif); font-weight: 700;
+    color: var(--persimmon); font-size: 15px;
+    width: 18px; flex-shrink: 0;
+  }
+  .step .q { font-size: 15.5px; font-weight: 400; }
+  .step .opt { color: var(--muted); font-size: 13px; margin-left: 4px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: var(--sans); font-size: 14px;
+    padding: 9px 15px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface-2);
+    color: var(--ink); cursor: pointer; transition: all .15s ease;
+  }
+  .chip:hover { border-color: var(--celadon); }
+  .chip[aria-pressed="true"] {
+    background: var(--celadon); border-color: var(--celadon);
+    color: #fff;
+  }
+  .chip:focus-visible { outline: 2px solid var(--persimmon); outline-offset: 2px; }
+
+  textarea {
+    width: 100%; margin-top: 12px; resize: vertical; min-height: 58px;
+    font-family: var(--sans); font-size: 14.5px; color: var(--ink);
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 12px; padding: 11px 13px; line-height: 1.5;
+  }
+  textarea:focus { outline: none; border-color: var(--celadon); }
+  textarea::placeholder { color: var(--muted); }
+
+  /* ---- closeness slider ---- */
+  .slider-row { display: flex; align-items: center; gap: 12px; }
+  .slider-row span { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; flex: 1; height: 4px;
+    border-radius: 4px; background: var(--line); outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--persimmon); border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--line); cursor: pointer;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--persimmon);
+    border: 3px solid var(--surface); cursor: pointer;
+  }
+
+  /* ---- the signature: reads-the-room chip ---- */
+  .room-read {
+    margin-top: 18px; padding: 13px 15px;
+    background: var(--surface-2); border: 1px dashed var(--celadon);
+    border-radius: 12px; font-size: 13.5px; color: var(--celadon-deep);
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+  .room-read b { font-weight: 400; color: var(--muted); }
+  .room-read .tag {
+    font-family: var(--sans); background: var(--celadon); color: #fff;
+    padding: 2px 9px; border-radius: 999px; font-size: 12.5px;
+  }
+
+  /* ---- generate button ---- */
+  .go {
+    width: 100%; margin-top: 4px; padding: 15px;
+    font-family: var(--serif); font-weight: 700; font-size: 17px;
+    color: #fff; background: var(--persimmon);
+    border: none; border-radius: 14px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  .go:hover { background: var(--persimmon-deep); }
+  .go:disabled { background: var(--muted); cursor: default; }
+  .go:focus-visible { outline: 2px solid var(--celadon-deep); outline-offset: 2px; }
+
+  /* ---- results ---- */
+  .results { margin-top: 26px; }
+  .results-head {
+    font-family: var(--serif); font-size: 14px; color: var(--muted);
+    text-align: center; margin: 0 0 16px; letter-spacing: 0.04em;
+  }
+  .note {
+    background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--celadon); border-radius: 12px;
+    padding: 18px 18px 14px; margin-bottom: 14px;
+  }
+  .note .label {
+    font-size: 12px; color: var(--persimmon-deep); font-family: var(--sans);
+    letter-spacing: 0.06em; margin-bottom: 9px;
+  }
+  .note .body {
+    font-family: var(--serif); font-size: 16.5px; line-height: 1.75;
+    white-space: pre-wrap; color: var(--ink);
+  }
+  .note .actions { margin-top: 13px; text-align: right; }
+  .copy {
+    font-family: var(--sans); font-size: 13px; color: var(--celadon-deep);
+    background: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px; cursor: pointer; transition: all .15s ease;
+  }
+  .copy:hover { border-color: var(--celadon); background: var(--surface-2); }
+  .copy.done { color: #fff; background: var(--celadon); border-color: var(--celadon); }
+
+  .again {
+    display: block; margin: 6px auto 0; padding: 11px 20px;
+    font-family: var(--sans); font-size: 14px; color: var(--celadon-deep);
+    background: none; border: 1px solid var(--line); border-radius: 999px; cursor: pointer;
+  }
+  .again:hover { background: var(--surface-2); }
+
+  .loading, .error {
+    text-align: center; font-family: var(--serif); padding: 26px 0; color: var(--muted);
+  }
+  .error { color: var(--persimmon-deep); }
+  .dots::after {
+    content: "·"; animation: blink 1.2s infinite; }
+  @keyframes blink { 0%,100%{opacity:.2} 50%{opacity:1} }
+
+  /* ---- ad slot (where AdSense would live) ---- */
+  .ad-slot {
+    margin: 20px 0 4px; padding: 22px;
+    border: 1px dashed var(--line); border-radius: 12px;
+    text-align: center; color: var(--muted); font-size: 12.5px; letter-spacing: 0.05em;
+  }
+
+  .foot {
+    text-align: center; font-size: 12px; color: var(--muted);
+    margin-top: 30px; line-height: 1.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="desk-mark"><span class="dot"></span>거절 대행 창구</div>
+    <h1 class="wordmark">대신 거절해드립니다</h1> 
+    <p class="tagline">거절은 하되, 관계는 지키도록</p>
+  </header>
+
+  <!-- 1. 상황 -->
+  <section class="card">
+    <div class="step"><span class="n">1</span><span class="q">무슨 말을 받았나요?</span></div>
+    <div class="chips" id="situation">
+      <button class="chip" aria-pressed="false" data-v="고백·연애">사귀자 / 고백</button>
+      <button class="chip" aria-pressed="false" data-v="돈">돈 빌려달라</button>
+      <button class="chip" aria-pressed="false" data-v="부탁">나 대신 해줘</button>
+      <button class="chip" aria-pressed="false" data-v="약속·모임">약속 / 모임</button>
+      <button class="chip" aria-pressed="false" data-v="직접 입력">직접</button>
+    </div>
+    <textarea id="theirMsg" placeholder="상대가 실제로 한 말 (선택) — 적으면 그 말에 맞춰 답을 만들어요"></textarea>
+  </section>
+
+  <!-- 2. 상대 -->
+  <section class="card">
+    <div class="step"><span class="n">2</span><span class="q">누구한테 거절하나요?</span></div>
+    <div class="chips" id="relationship">
+      <button class="chip" aria-pressed="false" data-v="친구">친구</button>
+      <button class="chip" aria-pressed="false" data-v="선배">선배</button>
+      <button class="chip" aria-pressed="false" data-v="후배">후배</button>
+      <button class="chip" aria-pressed="false" data-v="직장 상사·동료">직장</button>
+      <button class="chip" aria-pressed="false" data-v="썸·호감 있는 사이">썸 / 호감</button>
+      <button class="chip" aria-pressed="false" data-v="가족·친척">가족</button>
+      <button class="chip" aria-pressed="false" data-v="처음 본 사람">처음 본 사람</button>
+    </div>
+  </section>
+
+  <!-- 3. 친밀도 -->
+  <section class="card">
+    <div class="step"><span class="n">3</span><span class="q">얼마나 가까운 사이?</span></div>
+    <div class="slider-row">
+      <span>어색함</span>
+      <input type="range" id="closeness" min="1" max="5" value="3" />
+      <span>절친</span>
+    </div>
+  </section>
+
+  <!-- 4. 톤 -->
+  <section class="card">
+    <div class="step"><span class="n">4</span><span class="q">어떤 느낌으로?</span></div>
+    <div class="chips" id="tone">
+      <button class="chip" aria-pressed="false" data-v="정중하게">정중하게</button>
+      <button class="chip" aria-pressed="false" data-v="부드럽게">부드럽게</button>
+      <button class="chip" aria-pressed="false" data-v="단호하게">단호하게</button>
+      <button class="chip" aria-pressed="false" data-v="유머러스하게">유머있게</button>
+    </div>
+
+    <!-- signature: reads the room -->
+    <div class="room-read" id="roomRead">
+      <b>이 조합이면 →</b>
+      <span class="tag" id="tagSpeech">존댓말</span>
+      <span class="tag" id="tagDistance">거리감 있게</span>
+      <span class="tag" id="tagRoom">여지는 상황껏</span>
+    </div>
+  </section>
+
+  <button class="go" id="goBtn">거절 멘트 만들기</button>
+
+  <div class="results" id="results" hidden></div>
+
+  <div class="ad-slot">광고 영역 (애드센스 자리)</div>
+
+  <p class="foot">
+    프로토타입입니다 · 생성된 멘트는 참고용이에요<br/>
+    입력 내용은 저장하지 않습니다
+  </p>
+</div>
+
+<script>
+  const state = { situation: "", relationship: "", tone: "", closeness: 3 };
+
+  // single-select chip groups
+  function wireGroup(id, key) {
+    const group = document.getElementById(id);
+    group.addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      [...group.children].forEach(c => c.setAttribute("aria-pressed", "false"));
+      btn.setAttribute("aria-pressed", "true");
+      state[key] = btn.dataset.v;
+      updateRoomRead();
+    });
+  }
+  wireGroup("situation", "situation");
+  wireGroup("relationship", "relationship");
+  wireGroup("tone", "tone");
+
+  const closenessEl = document.getElementById("closeness");
+  closenessEl.addEventListener("input", () => {
+    state.closeness = +closenessEl.value;
+    updateRoomRead();
+  });
+
+  // --- the signature: derive how it "reads the room" live ---
+  function updateRoomRead() {
+    const r = state.relationship, c = state.closeness, t = state.tone;
+    let speech = "존댓말", distance, room = "여지는 상황껏";
+
+    if (r === "친구" || r === "가족·친척" || r === "후배") {
+      speech = c >= 3 ? "반말" : "편한 존댓말";
+    } else if (r === "썸·호감 있는 사이") {
+      speech = c >= 4 ? "반말" : "존댓말";
+    } else if (r === "직장 상사·동료" || r === "처음 본 사람" || r === "선배") {
+      speech = "존댓말";
+    } else {
+      speech = "존댓말";
+    }
+
+    distance = c <= 2 ? "거리감 있게" : c >= 4 ? "편하게" : "적당한 거리";
+
+    if (t === "단호하게") room = "여지 없이";
+    else if (t === "부드럽게") room = "부드럽게 여지 남김";
+    else if (r === "썸·호감 있는 사이") room = "상처 안 주게";
+    else if (t === "유머러스하게") room = "가볍게 넘기듯";
+
+    document.getElementById("tagSpeech").textContent = speech;
+    document.getElementById("tagDistance").textContent = distance;
+    document.getElementById("tagRoom").textContent = room;
+  }
+  updateRoomRead();
+
+  // --- generation via API ---
+  const goBtn = document.getElementById("goBtn");
+  const results = document.getElementById("results");
+
+  goBtn.addEventListener("click", generate);
+
+  async function generate() {
+    if (!state.situation || !state.relationship || !state.tone) {
+      results.hidden = false;
+      results.innerHTML = '<div class="error">상황 · 상대 · 느낌을 모두 골라주세요</div>';
+      return;
+    }
+    const theirMsg = document.getElementById("theirMsg").value.trim();
+
+    goBtn.disabled = true;
+    goBtn.textContent = "만드는 중…";
+    results.hidden = false;
+    results.innerHTML = '<div class="loading">상대 마음 덜 다치게 다듬는 중<span class="dots"></span></div>';
+
+    const system =
+      "너는 한국어 거절 메시지를 대신 써주는 도우미야. 핵심 원칙: " +
+      "(1) 관계가 말투를 결정한다 — 친구/가족/가까운 후배는 반말, 선배/직장/처음 본 사람은 존댓말. " +
+      "(2) 친밀도가 직설성을 결정한다 — 가까울수록 솔직하고 편하게, 어색할수록 격식 있고 거리를 둔다. " +
+      "(3) 요청한 톤(정중/부드럽게/단호/유머)을 지킨다. " +
+      "메시지는 카카오톡에 그대로 붙여 보낼 수 있을 만큼 자연스럽게. 로봇 같거나 번역투면 안 된다. " +
+      "과한 사과나 변명은 빼고, 거절은 분명히 하되 관계는 상하지 않게. " +
+      "서로 결이 다른 3개의 버전을 만들고, 각 버전에 짧은 한국어 라벨을 붙여라. " +
+      "반드시 JSON만 출력. 마크다운·설명·코드펜스 금지. " +
+      '형식: {"messages":[{"label":"라벨","text":"메시지"}]}';
+
+    const user =
+      "상황: " + state.situation +
+      "\n상대: " + state.relationship +
+      "\n친밀도(1어색~5절친): " + state.closeness +
+      "\n원하는 톤: " + state.tone +
+      (theirMsg ? "\n상대가 한 말: " + theirMsg : "");
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: system,
+          messages: [{ role: "user", content: user }]
+        })
+      });
+      const data = await res.json();
+      const text = (data.content || [])
+        .filter(b => b.type === "text").map(b => b.text).join("\n")
+        .replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(text);
+      render(parsed.messages || []);
+    } catch (err) {
+      results.innerHTML = '<div class="error">멘트를 만들지 못했어요. 잠시 후 다시 시도해주세요.</div>' +
+        '<button class="again" id="retry">다시 만들기</button>';
+      const rt = document.getElementById("retry");
+      if (rt) rt.addEventListener("click", generate);
+    } finally {
+      goBtn.disabled = false;
+      goBtn.textContent = "거절 멘트 만들기";
+    }
+  }
+
+  function render(messages) {
+    if (!messages.length) {
+      results.innerHTML = '<div class="error">결과가 비었어요. 다시 시도해주세요.</div>';
+      return;
+    }
+    let html = '<p class="results-head">— 골라서 보내세요 —</p>';
+    messages.forEach((m, i) => {
+      const safe = escapeHtml(m.text || "");
+      html +=
+        '<div class="note">' +
+          '<div class="label">' + escapeHtml(m.label || ("버전 " + (i + 1))) + '</div>' +
+          '<div class="body">' + safe + '</div>' +
+          '<div class="actions"><button class="copy" data-text="' + encodeURIComponent(m.text || "") + '">복사</button></div>' +
+        '</div>';
+    });
+    html += '<button class="again" id="again">조건 바꿔 다시 만들기</button>';
+    results.innerHTML = html;
+
+    results.querySelectorAll(".copy").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const t = decodeURIComponent(btn.dataset.text);
+        navigator.clipboard.writeText(t).then(() => {
+          btn.textContent = "복사됨"; btn.classList.add("done");
+          setTimeout(() => { btn.textContent = "복사"; btn.classList.remove("done"); }, 1400);
+        });
+      });
+    });
+    const again = document.getElementById("again");
+    if (again) again.addEventListener("click", () => {
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+      generate();
+    });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+</script>
+</body>
+</html>
