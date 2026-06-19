@@ -1,0 +1,192 @@
+:root {
+  --paper: #E7ECE6;
+  --surface: #FCFCFA;
+  --surface-2: #F3F6F1;
+  --ink: #25322B;
+  --celadon: #5E8270;
+  --celadon-deep: #3C5749;
+  --persimmon: #CC7B58;
+  --persimmon-deep: #B5663F;
+  --muted: #87938C;
+  --line: #D4DCD3;
+  --serif: "Gowun Batang", serif;
+  --sans: "Gowun Dodum", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+.wrap {
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 36px 20px 72px;
+}
+
+/* ---- header ---- */
+.masthead { text-align: center; margin-bottom: 30px; }
+.desk-mark {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; letter-spacing: 0.18em; color: var(--celadon);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 5px 14px; margin-bottom: 18px;
+  text-transform: uppercase;
+}
+.desk-mark .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--persimmon); }
+.wordmark {
+  font-family: var(--serif); font-weight: 700;
+  font-size: clamp(30px, 8vw, 40px);
+  margin: 0 0 8px; letter-spacing: -0.01em;
+}
+.tagline { font-family: var(--serif); color: var(--celadon-deep); font-size: 16px; margin: 0; }
+
+/* ---- form sections ---- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px 22px 24px;
+  margin-bottom: 16px;
+}
+.step {
+  display: flex; align-items: baseline; gap: 9px;
+  margin: 0 0 14px;
+}
+.step .n {
+  font-family: var(--serif); font-weight: 700;
+  color: var(--persimmon); font-size: 15px;
+  width: 18px; flex-shrink: 0;
+}
+.step .q { font-size: 15.5px; font-weight: 400; }
+.step .opt { color: var(--muted); font-size: 13px; margin-left: 4px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-family: var(--sans); font-size: 14px;
+  padding: 9px 15px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface-2);
+  color: var(--ink); cursor: pointer; transition: all .15s ease;
+}
+.chip:hover { border-color: var(--celadon); }
+.chip[aria-pressed="true"] {
+  background: var(--celadon); border-color: var(--celadon);
+  color: #fff;
+}
+.chip:focus-visible { outline: 2px solid var(--persimmon); outline-offset: 2px; }
+
+textarea {
+  width: 100%; margin-top: 12px; resize: vertical; min-height: 58px;
+  font-family: var(--sans); font-size: 14.5px; color: var(--ink);
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 12px; padding: 11px 13px; line-height: 1.5;
+}
+textarea:focus { outline: none; border-color: var(--celadon); }
+textarea::placeholder { color: var(--muted); }
+
+/* ---- closeness slider ---- */
+.slider-row { display: flex; align-items: center; gap: 12px; }
+.slider-row span { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; flex: 1; height: 4px;
+  border-radius: 4px; background: var(--line); outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--persimmon); border: 3px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--line); cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--persimmon);
+  border: 3px solid var(--surface); cursor: pointer;
+}
+
+/* ---- the signature: reads-the-room chip ---- */
+.room-read {
+  margin-top: 18px; padding: 13px 15px;
+  background: var(--surface-2); border: 1px dashed var(--celadon);
+  border-radius: 12px; font-size: 13.5px; color: var(--celadon-deep);
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+}
+.room-read b { font-weight: 400; color: var(--muted); }
+.room-read .tag {
+  font-family: var(--sans); background: var(--celadon); color: #fff;
+  padding: 2px 9px; border-radius: 999px; font-size: 12.5px;
+}
+
+/* ---- generate button ---- */
+.go {
+  width: 100%; margin-top: 4px; padding: 15px;
+  font-family: var(--serif); font-weight: 700; font-size: 17px;
+  color: #fff; background: var(--persimmon);
+  border: none; border-radius: 14px; cursor: pointer;
+  transition: background .15s ease;
+}
+.go:hover { background: var(--persimmon-deep); }
+.go:disabled { background: var(--muted); cursor: default; }
+.go:focus-visible { outline: 2px solid var(--celadon-deep); outline-offset: 2px; }
+
+/* ---- results ---- */
+.results { margin-top: 26px; }
+.results-head {
+  font-family: var(--serif); font-size: 14px; color: var(--muted);
+  text-align: center; margin: 0 0 16px; letter-spacing: 0.04em;
+}
+.note {
+  background: var(--surface); border: 1px solid var(--line);
+  border-left: 3px solid var(--celadon); border-radius: 12px;
+  padding: 18px 18px 14px; margin-bottom: 14px;
+}
+.note .label {
+  font-size: 12px; color: var(--persimmon-deep); font-family: var(--sans);
+  letter-spacing: 0.06em; margin-bottom: 9px;
+}
+.note .body {
+  font-family: var(--serif); font-size: 16.5px; line-height: 1.75;
+  white-space: pre-wrap; color: var(--ink);
+}
+.note .actions { margin-top: 13px; text-align: right; }
+.copy {
+  font-family: var(--sans); font-size: 13px; color: var(--celadon-deep);
+  background: none; border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 14px; cursor: pointer; transition: all .15s ease;
+}
+.copy:hover { border-color: var(--celadon); background: var(--surface-2); }
+.copy.done { color: #fff; background: var(--celadon); border-color: var(--celadon); }
+
+.again {
+  display: block; margin: 6px auto 0; padding: 11px 20px;
+  font-family: var(--sans); font-size: 14px; color: var(--celadon-deep);
+  background: none; border: 1px solid var(--line); border-radius: 999px; cursor: pointer;
+}
+.again:hover { background: var(--surface-2); }
+
+.loading, .error {
+  text-align: center; font-family: var(--serif); padding: 26px 0; color: var(--muted);
+}
+.error { color: var(--persimmon-deep); }
+.dots::after {
+  content: "·"; animation: blink 1.2s infinite; }
+@keyframes blink { 0%,100%{opacity:.2} 50%{opacity:1} }
+
+/* ---- ad slot (where AdSense would live) ---- */
+.ad-slot {
+  margin: 20px 0 4px; padding: 22px;
+  border: 1px dashed var(--line); border-radius: 12px;
+  text-align: center; color: var(--muted); font-size: 12.5px; letter-spacing: 0.05em;
+}
+
+.foot {
+  text-align: center; font-size: 12px; color: var(--muted);
+  margin-top: 30px; line-height: 1.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
