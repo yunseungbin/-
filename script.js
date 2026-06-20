@@ -14,39 +14,32 @@ function wireGroup(id, key) {
 wireGroup("situation", "situation");
 wireGroup("tone", "tone");
 
-// 상대 선택 — 가족 선택 시 서브칩 표시
-const relationshipGroup = document.getElementById("relationship");
+// 상대 선택
 const familySub = document.getElementById("familySub");
-let familyDetail = "";
 
-relationshipGroup.addEventListener("click", (e) => {
-  const btn = e.target.closest(".chip");
-  if (!btn || btn.closest("#familySub")) return;
-  [...relationshipGroup.querySelectorAll(".chip:not(.chip--sub)")].forEach(c => c.setAttribute("aria-pressed", "false"));
-  btn.setAttribute("aria-pressed", "true");
+document.querySelectorAll("#relationship .chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#relationship .chip").forEach(c => c.setAttribute("aria-pressed", "false"));
+    btn.setAttribute("aria-pressed", "true");
+    state.relationship = btn.dataset.v;
 
-  if (btn.dataset.hasSub) {
-    familySub.hidden = false;
-    // 서브칩 선택 초기화
-    [...familySub.querySelectorAll(".chip--sub")].forEach(c => c.setAttribute("aria-pressed", "false"));
-    familyDetail = "";
-    state.relationship = btn.dataset.v;
-  } else {
-    familySub.hidden = true;
-    familyDetail = "";
-    state.relationship = btn.dataset.v;
-  }
-  updateRoomRead();
+    if (btn.dataset.hasSub === "true") {
+      familySub.style.display = "flex";
+      document.querySelectorAll("#familySub .chip--sub").forEach(c => c.setAttribute("aria-pressed", "false"));
+    } else {
+      familySub.style.display = "none";
+    }
+    updateRoomRead();
+  });
 });
 
-familySub.addEventListener("click", (e) => {
-  const btn = e.target.closest(".chip--sub");
-  if (!btn) return;
-  [...familySub.querySelectorAll(".chip--sub")].forEach(c => c.setAttribute("aria-pressed", "false"));
-  btn.setAttribute("aria-pressed", "true");
-  familyDetail = btn.dataset.v;
-  state.relationship = "가족·친척(" + familyDetail + ")";
-  updateRoomRead();
+document.querySelectorAll("#familySub .chip--sub").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#familySub .chip--sub").forEach(c => c.setAttribute("aria-pressed", "false"));
+    btn.setAttribute("aria-pressed", "true");
+    state.relationship = "가족·친척(" + btn.dataset.v + ")";
+    updateRoomRead();
+  });
 });
 
 const closenessEl = document.getElementById("closeness");
