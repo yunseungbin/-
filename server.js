@@ -15,6 +15,21 @@ const cache = new Map();
 const CACHE_MAX_KEYS = 500;
 const VARIANTS_PER_KEY = 15;
 
+// 일일 사용량 제한
+const rateLimits = new Map(); // ip -> { count, date }
+const DAILY_LIMIT = 10;
+
+function getRateLimitEntry(ip) {
+  const today = new Date().toISOString().slice(0, 10);
+  const entry = rateLimits.get(ip);
+  if (!entry || entry.date !== today) {
+    const fresh = { count: 0, date: today };
+    rateLimits.set(ip, fresh);
+    return fresh;
+  }
+  return entry;
+}
+
 function cacheKey(situation, relationship, closeness, tone) {
   return `${situation}|${relationship}|${closeness}|${tone}`;
 }
@@ -62,38 +77,46 @@ app.post("/api/generate", async (req, res) => {
     return res.status(400).json({ error: "필수 항목 누락" });
   }
 
-  // 상대가 한 말이 있으면 개인화 요청 → 캐시 생략
   const personalized = !!theirMsg;
 
+  // 캐시 히트 → API 호출 없음 → 한도 차감 안 함
   if (!personalized) {
     const key = cacheKey(situation, relationship, closeness, tone);
     const entry = cache.get(key);
-
     if (entry && entry.length > 0) {
       const pick = entry[Math.floor(Math.random() * entry.length)];
       return res.json({ messages: pick, fromCache: true });
     }
   }
 
+  // 일일 사용량 제한
+  const ip = req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.socket.remoteAddress || "unknown";
+  const rl = getRateLimitEntry(ip);
+  if (rl.count >= DAILY_LIMIT) {
+    return res.status(429).json({
+      error: `오늘 무료 횟수(${DAILY_LIMIT}회)를 모두 썼어요. 자정 이후에 다시 사용할 수 있어요.`,
+      rateLimited: true,
+    });
+  }
+
   try {
     const messages = await callClaude(situation, relationship, closeness, tone, theirMsg);
+
+    rl.count += 1;
 
     if (!personalized) {
       const key = cacheKey(situation, relationship, closeness, tone);
       const entry = cache.get(key) || [];
-
       if (entry.length < VARIANTS_PER_KEY) {
         entry.push(messages);
         cache.set(key, entry);
       }
-
-      // 캐시가 너무 커지면 가장 오래된 키 제거
       if (cache.size > CACHE_MAX_KEYS) {
         cache.delete(cache.keys().next().value);
       }
     }
 
-    res.json({ messages });
+    res.json({ messages, remaining: DAILY_LIMIT - rl.count });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "멘트 생성 실패" });

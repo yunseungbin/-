@@ -79,8 +79,14 @@ async function generate() {
       }),
     });
     const data = await res.json();
+
+    if (res.status === 429) {
+      results.innerHTML = '<div class="error">' + escapeHtml(data.error || "오늘 사용 한도를 초과했어요.") + '</div>';
+      return;
+    }
     if (!res.ok) throw new Error(data.error || "서버 오류");
-    render(data.messages || []);
+
+    render(data.messages || [], data.remaining);
   } catch (err) {
     results.innerHTML = '<div class="error">멘트를 만들지 못했어요. 잠시 후 다시 시도해주세요.</div>' +
       '<button class="again" id="retry">다시 만들기</button>';
@@ -92,12 +98,15 @@ async function generate() {
   }
 }
 
-function render(messages) {
+function render(messages, remaining) {
   if (!messages.length) {
     results.innerHTML = '<div class="error">결과가 비었어요. 다시 시도해주세요.</div>';
     return;
   }
-  let html = '<p class="results-head">— 골라서 보내세요 —</p>';
+  const remainingHtml = remaining != null
+    ? '<p class="remaining">오늘 남은 무료 횟수: <strong>' + remaining + '회</strong></p>'
+    : '';
+  let html = remainingHtml + '<p class="results-head">— 골라서 보내세요 —</p>';
   messages.forEach((m, i) => {
     const safe = escapeHtml(m.text || "");
     html +=

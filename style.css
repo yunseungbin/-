@@ -134,6 +134,11 @@ input[type="range"]::-moz-range-thumb {
 
 /* ---- results ---- */
 .results { margin-top: 26px; }
+.remaining {
+  font-size: 12px; color: var(--muted); text-align: right;
+  margin: 0 0 8px; font-family: var(--sans);
+}
+.remaining strong { color: var(--persimmon-deep); }
 .results-head {
   font-family: var(--serif); font-size: 14px; color: var(--muted);
   text-align: center; margin: 0 0 16px; letter-spacing: 0.04em;

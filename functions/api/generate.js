@@ -1,3 +1,5 @@
+const DAILY_LIMIT = 10;
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
@@ -17,12 +19,28 @@ export async function onRequestPost(context) {
   const personalized = !!theirMsg;
   const cacheKey = `${situation}|${relationship}|${closeness}|${tone}`;
 
-  // KV 캐시 조회 (theirMsg 없을 때만)
+  // KV 캐시 조회 (theirMsg 없을 때만) — 캐시 히트는 API 호출 없음 → 한도 차감 안 함
   if (!personalized && env.CACHE) {
     const cached = await env.CACHE.get(cacheKey, { type: "json" });
     if (cached && cached.length > 0) {
       const pick = cached[Math.floor(Math.random() * cached.length)];
       return Response.json({ messages: pick, fromCache: true });
+    }
+  }
+
+  // 일일 사용량 제한 (KV 있을 때만 적용)
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const dateStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD (UTC)
+  const rlKey = `rl|${ip}|${dateStr}`;
+  let usedToday = 0;
+
+  if (env.CACHE) {
+    usedToday = (await env.CACHE.get(rlKey, { type: "json" })) || 0;
+    if (usedToday >= DAILY_LIMIT) {
+      return Response.json(
+        { error: `오늘 무료 횟수(${DAILY_LIMIT}회)를 모두 썼어요. 자정 이후에 다시 사용할 수 있어요.`, rateLimited: true },
+        { status: 429 }
+      );
     }
   }
 
@@ -69,18 +87,27 @@ export async function onRequestPost(context) {
       .trim();
     const messages = JSON.parse(raw).messages || [];
 
-    // KV 캐시 저장 (최대 15개 변형)
-    if (!personalized && env.CACHE) {
-      const existing = (await env.CACHE.get(cacheKey, { type: "json" })) || [];
-      if (existing.length < 15) {
-        existing.push(messages);
-        await env.CACHE.put(cacheKey, JSON.stringify(existing), {
-          expirationTtl: 60 * 60 * 24 * 30, // 30일
-        });
+    // KV 캐시 저장 (최대 15개 변형) + 사용량 카운터 증가
+    if (env.CACHE) {
+      if (!personalized) {
+        const existing = (await env.CACHE.get(cacheKey, { type: "json" })) || [];
+        if (existing.length < 15) {
+          existing.push(messages);
+          await env.CACHE.put(cacheKey, JSON.stringify(existing), {
+            expirationTtl: 60 * 60 * 24 * 30, // 30일
+          });
+        }
       }
+
+      // 사용량 +1
+      await env.CACHE.put(rlKey, JSON.stringify(usedToday + 1), {
+        expirationTtl: 60 * 60 * 48, // 48시간 (다음날 자정까지 유지)
+      });
     }
 
-    return Response.json({ messages });
+    const remaining = env.CACHE ? Math.max(0, DAILY_LIMIT - (usedToday + 1)) : null;
+
+    return Response.json({ messages, remaining });
   } catch (err) {
     return Response.json({ error: "멘트 생성 실패" }, { status: 500 });
   }
