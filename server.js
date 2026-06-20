@@ -34,17 +34,26 @@ function cacheKey(situation, relationship, closeness, tone) {
   return `${situation}|${relationship}|${closeness}|${tone}`;
 }
 
-async function callClaude(situation, relationship, closeness, tone, theirMsg) {
-  const system =
-    "너는 한국어 거절 메시지를 대신 써주는 도우미야. 핵심 원칙: " +
-    "(1) 관계가 말투를 결정한다 — 친구/가족/가까운 후배는 반말, 선배/직장/처음 본 사람은 존댓말. " +
-    "(2) 친밀도가 직설성을 결정한다 — 가까울수록 솔직하고 편하게, 어색할수록 격식 있고 거리를 둔다. " +
-    "(3) 요청한 톤(정중/부드럽게/단호/유머)을 지킨다. " +
-    "메시지는 카카오톡에 그대로 붙여 보낼 수 있을 만큼 자연스럽게. 로봇 같거나 번역투면 안 된다. " +
-    "과한 사과나 변명은 빼고, 거절은 분명히 하되 관계는 상하지 않게. " +
-    "서로 결이 다른 3개의 버전을 만들고, 각 버전에 짧은 한국어 라벨을 붙여라. " +
-    "반드시 JSON만 출력. 마크다운·설명·코드펜스 금지. " +
-    '형식: {"messages":[{"label":"라벨","text":"메시지"}]}';
+function buildPrompt(situation, relationship, closeness, tone, theirMsg) {
+  const isAbsurd = situation === "고백·연애" && relationship.includes("가족");
+
+  const system = isAbsurd
+    ? "너는 한국어 반응 메시지를 대신 써주는 도우미야. " +
+      "가족이 연애·고백을 요청하는 건 상식 밖의 황당한 상황이다. " +
+      "정중한 거절이 아니라 당황함·황당함·충격을 담은 현실적인 반응을 써야 한다. " +
+      "카카오톡에 그대로 붙여 보낼 수 있을 만큼 자연스럽고 짧게. '미쳤냐?' '정신이 나간 거야?' 같은 솔직한 충격 반응이 핵심이다. " +
+      "서로 결이 다른 3개의 버전을 만들고, 각 버전에 짧은 한국어 라벨을 붙여라. " +
+      "반드시 JSON만 출력. 마크다운·설명·코드펜스 금지. " +
+      '형식: {"messages":[{"label":"라벨","text":"메시지"}]}'
+    : "너는 한국어 거절 메시지를 대신 써주는 도우미야. 핵심 원칙: " +
+      "(1) 관계가 말투를 결정한다 — 친구/가족/가까운 후배는 반말, 선배/직장/처음 본 사람은 존댓말. " +
+      "(2) 친밀도가 직설성을 결정한다 — 가까울수록 솔직하고 편하게, 어색할수록 격식 있고 거리를 둔다. " +
+      "(3) 요청한 톤(정중/부드럽게/단호/유머)을 지킨다. " +
+      "메시지는 카카오톡에 그대로 붙여 보낼 수 있을 만큼 자연스럽게. 로봇 같거나 번역투면 안 된다. " +
+      "과한 사과나 변명은 빼고, 거절은 분명히 하되 관계는 상하지 않게. " +
+      "서로 결이 다른 3개의 버전을 만들고, 각 버전에 짧은 한국어 라벨을 붙여라. " +
+      "반드시 JSON만 출력. 마크다운·설명·코드펜스 금지. " +
+      '형식: {"messages":[{"label":"라벨","text":"메시지"}]}';
 
   const user =
     "상황: " + situation +
@@ -52,6 +61,12 @@ async function callClaude(situation, relationship, closeness, tone, theirMsg) {
     "\n친밀도(1어색~5절친): " + closeness +
     "\n원하는 톤: " + tone +
     (theirMsg ? "\n상대가 한 말: " + theirMsg : "");
+
+  return { system, user };
+}
+
+async function callClaude(situation, relationship, closeness, tone, theirMsg) {
+  const { system, user } = buildPrompt(situation, relationship, closeness, tone, theirMsg);
 
   const res = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
