@@ -66,6 +66,7 @@ function updateRoomRead() {
 
   if (t === "단호하게") room = "여지 없이";
   else if (t === "부드럽게") room = "부드럽게 여지 남김";
+  else if (t === "테토남 스타일") room = "직설적·쿨하게";
   else if (r === "썸·호감 있는 사이") room = "상처 안 주게";
   else if (t === "유머러스하게") room = "가볍게 넘기듯";
 
