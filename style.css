@@ -45,26 +45,6 @@ body {
   font-size: clamp(30px, 8vw, 40px);
   margin: 0 0 8px; letter-spacing: -0.01em;
 }
-.split-word {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 1px;
-}
-.sw-1 {
-  color: var(--ink);
-}
-.sw-dots {
-  color: var(--muted);
-  font-size: 0.6em;
-  letter-spacing: -0.05em;
-  padding: 0 3px;
-  align-self: flex-end;
-  margin-bottom: 0.15em;
-}
-.sw-2 {
-  color: var(--persimmon-deep);
-  font-size: 1.15em;
-}
 .tagline { font-family: var(--serif); color: var(--celadon-deep); font-size: 16px; margin: 0; }
 
 /* ---- form sections ---- */
