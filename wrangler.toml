@@ -1,0 +1,6 @@
+name = "refuse-81l"
+pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "862ba41f3a9048b2b34265922594349d"
