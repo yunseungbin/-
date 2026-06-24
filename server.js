@@ -75,7 +75,17 @@ function buildPrompt(situation, relationship, closeness, tone, theirMsg) {
   return { system, user };
 }
 
+const MOCK_MODE = process.env.MOCK === "true";
+
 async function callClaude(situation, relationship, closeness, tone, theirMsg) {
+  if (MOCK_MODE) {
+    return [
+      { label: "버전 1 (목업)", text: `[MOCK] ${situation} / ${relationship} / ${tone} 거절 멘트 예시입니다.` },
+      { label: "버전 2 (목업)", text: `[MOCK] 두 번째 버전입니다. 실제 배포 시 AI가 생성합니다.` },
+      { label: "버전 3 (목업)", text: `[MOCK] 세 번째 버전입니다. API 토큰을 소모하지 않습니다.` },
+    ];
+  }
+
   const { system, user } = buildPrompt(situation, relationship, closeness, tone, theirMsg);
 
   const res = await client.messages.create({
@@ -114,10 +124,10 @@ app.post("/api/generate", async (req, res) => {
     }
   }
 
-  // 일일 사용량 제한
+  // 일일 사용량 제한 (DISABLE_RATE_LIMIT=true 이면 스킵)
   const ip = req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.socket.remoteAddress || "unknown";
   const rl = getRateLimitEntry(ip);
-  if (rl.count >= DAILY_LIMIT) {
+  if (process.env.DISABLE_RATE_LIMIT !== "true" && rl.count >= DAILY_LIMIT) {
     return res.status(429).json({
       error: `오늘 무료 횟수(${DAILY_LIMIT}회)를 모두 썼어요. 자정 이후에 다시 사용할 수 있어요.`,
       rateLimited: true,

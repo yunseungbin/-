@@ -65,7 +65,7 @@ function updateRoomRead() {
   } else if (r === "처음 본 사람") {
     speech = "존댓말";
   } else if (r.includes("어머니") || r.includes("아버지")) {
-    speech = "존댓말"; // 부모님은 항상 존댓말
+    speech = c >= 4 ? "반말" : "존댓말";
   } else if (r.startsWith("가족")) {
     speech = "반말"; // 형제자매·동생 등
   } else {
