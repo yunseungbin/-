@@ -52,14 +52,22 @@ function updateRoomRead() {
   const r = state.relationship, c = state.closeness, t = state.tone;
   let speech = "존댓말", distance, room = "여지는 상황껏";
 
-  if (r === "친구" || r.startsWith("가족") || r === "후배") {
+  if (r === "친구") {
     speech = c >= 3 ? "반말" : "편한 존댓말";
+  } else if (r === "후배") {
+    speech = "반말"; // 내가 선배 → 항상 반말
   } else if (r === "선배") {
     speech = c >= 4 ? "편한 반말" : "존댓말";
+  } else if (r === "직장 상사·동료") {
+    speech = "존댓말";
   } else if (r === "썸·호감 있는 사이") {
     speech = c >= 4 ? "반말" : "존댓말";
-  } else if (r === "직장 상사·동료" || r === "처음 본 사람") {
+  } else if (r === "처음 본 사람") {
     speech = "존댓말";
+  } else if (r.includes("어머니") || r.includes("아버지")) {
+    speech = "존댓말"; // 부모님은 항상 존댓말
+  } else if (r.startsWith("가족")) {
+    speech = "반말"; // 형제자매·동생 등
   } else {
     speech = "존댓말";
   }
